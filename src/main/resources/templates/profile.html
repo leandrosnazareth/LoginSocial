@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Social - Meu Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 15px;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 5px solid white;
+        }
+        .provider-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            border: 2px solid white;
+        }
+        .google-badge {
+            background-color: #DB4437;
+        }
+        .facebook-badge {
+            background-color: #1877F2;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #6e8efb;
+        }
+        .nav-pills .nav-link {
+            color: #495057;
+        }
+        .card-hover {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .attribute-key {
+            font-weight: 500;
+            color: #6e8efb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shield-lock me-2"></i>Login Social
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3 d-none d-sm-block">Olá, <span th:text="${name}"></span></span>
+                <a th:href="@{/logout}" class="btn btn-danger">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="container my-5">
+        <div class="profile-header p-4 p-md-5 position-relative">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center mb-4 mb-md-0">
+                    <div class="position-relative d-inline-block">
+                        <img th:src="${#strings.startsWith(provider, 'google')} ? 'https://ui-avatars.com/api/?name=' + ${name} + '&background=DB4437&color=fff' : 'https://ui-avatars.com/api/?name=' + ${name} + '&background=1877F2&color=fff'" 
+                             class="avatar rounded-circle" alt="Avatar">
+                        <div th:classappend="${#strings.startsWith(provider, 'google')} ? 'google-badge' : 'facebook-badge'" 
+                             class="provider-badge">
+                            <i th:class="${#strings.startsWith(provider, 'google')} ? 'bi bi-google' : 'bi bi-facebook'"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <h2 th:text="${name}" class="fw-bold mb-2"></h2>
+                    <p class="mb-1"><i class="bi bi-envelope me-2"></i> <span th:text="${email}"></span></p>
+                    <p class="mb-0"><i class="bi bi-shield-check me-2"></i> 
+                        <span th:text="${#strings.startsWith(provider, 'google')} ? 'Conta Google' : 'Conta Facebook'"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card card-hover h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Informações Básicas</h5>
+                        <hr>
+                        <div class="mb-3">
+                            <p class="mb-1"><span class="attribute-key">Nome:</span> <span th:text="${name}"></span></p>
+                            <p class="mb-1"><span class="attribute-key">Email:</span> <span th:text="${email}"></span></p>
+                            <p class="mb-1"><span class="attribute-key">Provedor:</span> 
+                                <span th:text="${#strings.startsWith(provider, 'google')} ? 'Google' : 'Facebook'"></span>
+                            </p>
+                        </div>
+                        <a th:href="@{/}" class="btn btn-outline-primary w-100 mt-3">
+                            <i class="bi bi-house-door me-2"></i>Voltar ao Início
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card card-hover">
+                    <div class="card-body">
+                        <ul class="nav nav-pills mb-4" id="profile-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="details-tab" data-bs-toggle="pill" data-bs-target="#details" type="button" role="tab">Detalhes</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="activity-tab" data-bs-toggle="pill" data-bs-target="#activity" type="button" role="tab">Atividade</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab">Configurações</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="profile-tabContent">
+                            <div class="tab-pane fade show active" id="details" role="tabpanel">
+                                <h5><i class="bi bi-person-lines-fill me-2"></i>Informações do Perfil</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr th:each="attr : ${user.attributes}">
+                                                <td class="attribute-key" th:text="${attr.key}"></td>
+                                                <td th:text="${attr.value}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="activity" role="tabpanel">
+                                <h5><i class="bi bi-clock-history me-2"></i>Sua Atividade</h5>
+                                <p class="text-muted">Nenhuma atividade recente.</p>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> Este recurso será implementado em breve.
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="settings" role="tabpanel">
+                                <h5><i class="bi bi-gear me-2"></i>Configurações</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">Notificações por Email</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="notifications" checked>
+                                            <label class="form-check-label" for="notifications">Receber notificações</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tema</label>
+                                        <select class="form-select">
+                                            <option>Claro</option>
+                                            <option>Escuro</option>
+                                            <option>Sistema</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-shield-lock"></i> Login Social</h5>
+                    <p class="text-muted">Gerencie sua conta conectada.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-decoration-none text-muted">Home</a></li>
+                        <li><a th:href="@{/profile}" class="text-decoration-none text-muted">Meu Perfil</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Ajuda</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="#" class="text-decoration-none text-muted">Suporte</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">Privacidade</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-secondary">
+            <div class="text-center text-muted">
+                <small>© 2023 Login Social Demo. Todos os direitos reservados.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
